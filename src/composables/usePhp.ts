@@ -51,7 +51,25 @@ export function usePhp() {
       }
     }
 
-    // 3. Bootstrap full Laravel application
+    // 3. Ensure required storage directories exist (ZIP omits empty dirs)
+    for (const dir of [
+      '/app/storage/framework/cache/data',
+      '/app/storage/framework/sessions',
+      '/app/storage/framework/testing',
+      '/app/storage/framework/views',
+      '/app/storage/logs',
+    ]) {
+      const parts = dir.split('/').filter(Boolean)
+      let path = ''
+      for (const part of parts) {
+        path += '/' + part
+        if (!php.value!.fileExists(path)) {
+          php.value!.mkdir(path)
+        }
+      }
+    }
+
+    // 4. Bootstrap full Laravel application
     setStatus('Bootstrapping Laravel...', 0.88)
     await php.value!.run({
       code: `<?php

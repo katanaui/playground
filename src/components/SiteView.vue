@@ -2,7 +2,7 @@
 import { ref, watch } from 'vue'
 import { usePhp } from '../composables/usePhp'
 
-const { navigateTo, booted } = usePhp()
+const { navigateTo, readFile, fileExists, booted } = usePhp()
 
 watch(booted, (ready) => {
   if (ready) go()
@@ -13,6 +13,32 @@ const navigating = ref(false)
 const srcdoc = ref(`<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:system-ui;color:#a8a29e;">Loading...</div>`)
 
 const tailwindCdn = `<script src="https://unpkg.com/@tailwindcss/browser@4"><\/script>`
+
+function inlineVfsAssets(html: string): string {
+  // Inline CSS: replace <link> tags pointing to /build/assets/*.css
+  html = html.replace(
+    /<link[^>]+href="\/build\/assets\/([^"]+\.css)"[^>]*\/?>/g,
+    (_, filename) => {
+      const vfsPath = `/app/public/build/assets/${filename}`
+      if (fileExists(vfsPath)) {
+        return `<style>${readFile(vfsPath)}</style>`
+      }
+      return ''
+    }
+  )
+  // Inline JS: replace <script> tags pointing to /build/assets/*.js
+  html = html.replace(
+    /<script[^>]+src="\/build\/assets\/([^"]+\.js)"[^>]*><\/script>/g,
+    (_, filename) => {
+      const vfsPath = `/app/public/build/assets/${filename}`
+      if (fileExists(vfsPath)) {
+        return `<script>${readFile(vfsPath)}<\/script>`
+      }
+      return ''
+    }
+  )
+  return html
+}
 
 function injectTailwind(html: string): string {
   if (html.includes('<head>')) {
@@ -30,7 +56,7 @@ async function go() {
 
   try {
     const html = await navigateTo(path)
-    srcdoc.value = html ? injectTailwind(html) : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:system-ui;color:#a8a29e;">No output from ${path}</div>`
+    srcdoc.value = html ? injectTailwind(inlineVfsAssets(html)) : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:system-ui;color:#a8a29e;">No output from ${path}</div>`
   } catch (err: any) {
     srcdoc.value = `<div style="padding:2rem;font-family:system-ui;"><h2 style="color:#dc2626;margin:0 0 1rem;">Error</h2><pre style="background:#fef2f2;padding:1rem;border-radius:0.5rem;overflow:auto;color:#991b1b;font-size:0.875rem;">${err.message}</pre></div>`
     console.error(err)
