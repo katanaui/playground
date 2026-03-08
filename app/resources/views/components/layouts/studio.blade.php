@@ -95,7 +95,7 @@
         .studio-sidebar {
             width: 244px;
             min-width: 244px;
-            background: #f9fafb;
+            background: #fafbfa;
             border-right: 1px solid #e5e7eb;
             display: flex;
             flex-direction: column;
@@ -155,7 +155,7 @@
             width: 100%;
             text-align: left;
         }
-        .group-header:hover { background: #f9fafb; }
+        .group-header:hover { background: #fafbfa; }
         .group-header .chevron {
             width: 12px;
             height: 12px;

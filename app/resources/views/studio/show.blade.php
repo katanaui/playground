@@ -4,7 +4,7 @@
         style="display:flex;flex-direction:column;height:100%;overflow:hidden;"
     >
         {{-- Preview Area --}}
-        <div style="flex:1;min-height:180px;position:relative;overflow:hidden;background:repeating-conic-gradient(#f9fafb 0% 25%, transparent 0% 50%) 50% / 20px 20px;">
+        <div style="flex:1;min-height:180px;position:relative;overflow:hidden;background:repeating-conic-gradient(#f9fafb 0% 25%, transparent 0% 50%) 50% / 20px 20px; background:#ffffff">
             {{-- Drag overlay — blocks iframe from capturing mouse events during resize --}}
             <div x-show="dragging" style="position:absolute;inset:0;z-index:10;cursor:row-resize;" x-cloak></div>
 

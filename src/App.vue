@@ -54,7 +54,7 @@ onMounted(async () => {
     />
 
     <!-- Top accent border -->
-    <div class="h-0 bg-linear-to-br from-blue-600 to-purple-600 via-indigo-600 shrink-0"></div>
+    <div class="h-1.5 bg-rose-500 shrink-0"></div>
 
     <AppHeader :route="currentRoute" :navigating="isNavigating" @navigate="handleNavigate" />
     <TabBar :active-tab="activeTab" @update:active-tab="activeTab = $event" />

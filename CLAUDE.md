@@ -11,6 +11,9 @@ Allowing users to update slots or props opens up the vulnerability for a user to
 # References
 
 ### Code References
+The code for the KatanaUI library will be located inside of the app/vendor/katanaui/katana folder.  I can make any updates to this codebase and then it will update here. I have to update the components from the ~/Sites/katanaui/packages/katanaui/katana folder and then push that change. I then have to cd into this /app directory and run composer update. So you can reference the main codebase for the KatanaUI library from either this root folder and `/app/vendor/katanaui/katana` or you can refer to it from `~/Sites/katanaui/packages/katanaui/katana`.
+
+### External Code References
 You can look at the functionality, which has been significantly built at `~/Sites/katanaui`. In there are files that will allow you to load `http://katanaui.test/components` and you will see a Storybook style component preview. It also has options down at the bottom to allow you to modify the elements prop and slot values. You can search inside of the `~/Sites/katanaui` folder for a significant amount of functionality work that we are going to port over.
 
 ### Storybook
