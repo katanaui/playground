@@ -180,9 +180,9 @@
             color: #111827;
         }
         .nav-item.active {
-            background: #eff6ff;
-            color: #2563eb;
-            border-left-color: #2563eb;
+            background: #ffebeb;
+            color: #ea3e75;
+            border-left-color: #ea3e75;
             font-weight: 500;
         }
         .nav-icon {

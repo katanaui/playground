@@ -76,6 +76,13 @@
             "dont-discover": []
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/*/*",
+            "symlink": true
+        }
+    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

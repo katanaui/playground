@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95c385cfc1465afe6c46a56299cde94e",
+    "content-hash": "3959efd9fb5479be6ad5db3126342650",
     "packages": [
         {
             "name": "blade-ui-kit/blade-icons",
@@ -1350,16 +1350,10 @@
         {
             "name": "katanaui/katana",
             "version": "dev-dev",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/katanaui/katana.git",
-                "reference": "c07dc923bd7fb53b53cd655284c0ad5f09b39045"
-            },
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/katanaui/katana/zipball/c07dc923bd7fb53b53cd655284c0ad5f09b39045",
-                "reference": "c07dc923bd7fb53b53cd655284c0ad5f09b39045",
-                "shasum": ""
+                "type": "path",
+                "url": "packages/katanaui/katana",
+                "reference": "c07dc923bd7fb53b53cd655284c0ad5f09b39045"
             },
             "require": {
                 "codeat3/blade-phosphor-icons": "^2.0",
@@ -1375,12 +1369,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "aliases": {
-                        "Katana": "Katanaui\\KatanaFacade"
-                    },
                     "providers": [
                         "Katanaui\\KatanaServiceProvider"
-                    ]
+                    ],
+                    "aliases": {
+                        "Katana": "Katanaui\\KatanaFacade"
+                    }
                 }
             },
             "autoload": {
@@ -1388,7 +1382,19 @@
                     "Katanaui\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Katanaui\\Katana\\Tests\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ],
+                "test-coverage": [
+                    "vendor/bin/phpunit --coverage-html coverage"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -1405,11 +1411,9 @@
                 "katana",
                 "katanaui"
             ],
-            "support": {
-                "issues": "https://github.com/katanaui/katana/issues",
-                "source": "https://github.com/katanaui/katana/tree/dev"
-            },
-            "time": "2026-03-08T13:08:17+00:00"
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "laravel/framework",

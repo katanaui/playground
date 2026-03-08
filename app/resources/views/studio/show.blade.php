@@ -261,6 +261,7 @@
                 dragging: false,
                 code: @json($code),
                 component: @json($componentId),
+                container: @json($container),
                 attrs: @json($attrs),
                 slotValues: @json($slotValues),
                 previewHtml: @json($previewDoc),

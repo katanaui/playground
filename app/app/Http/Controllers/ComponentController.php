@@ -26,11 +26,12 @@ class ComponentController extends Controller
         $slots = $yaml['slots'] ?? [];
         $componentName = $yaml['component'] ?? ucfirst(str_replace('-', ' ', $component));
 
-        // Read current values from query string, falling back to YAML defaults
+        // Read current values from query string, falling back to studio defaults then YAML defaults
+        $studioDefaults = $yaml['studio']['defaults'] ?? [];
         $attrs = [];
         foreach ($props as $prop) {
             $name = $prop['name'];
-            $default = $prop['default'] ?? '';
+            $default = $studioDefaults[$name] ?? $prop['default'] ?? '';
             $attrs[$name] = request()->input("attrs.{$name}", $default);
         }
 
@@ -41,18 +42,23 @@ class ComponentController extends Controller
             $slotValues[$name] = request()->input("slots.{$name}", $default);
         }
 
-        // Ensure default slot exists
+        // Ensure default slot exists — only use component name if slots are defined in YAML
         if (!isset($slotValues['slot'])) {
-            $slotValues['slot'] = request()->input('slots.slot', $componentName);
+            $fallback = !empty($slots) ? $componentName : '';
+            $slotValues['slot'] = request()->input('slots.slot', $fallback);
         }
 
         $componentId = $component;
+        $container = $yaml['studio']['container'] ?? null;
         $code = $this->generateCode($component, $attrs, $slotValues, $props);
+
+        // Wrap in studio container for preview rendering (but keep $code clean for display)
+        $renderCode = $container ? str_replace('{{component}}', $code, $container) : $code;
 
         // Server-side render the initial preview as a full HTML document (srcdoc for nested iframe)
         $renderedHtml = '';
         try {
-            $renderedHtml = Blade::render($code);
+            $renderedHtml = Blade::render($renderCode);
         } catch (\Throwable $e) {
             $renderedHtml = '<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">' . e($e->getMessage()) . '</pre></div>';
         }
@@ -67,6 +73,7 @@ class ComponentController extends Controller
             'attrs',
             'slotValues',
             'code',
+            'container',
             'previewDoc'
         ));
     }
@@ -80,10 +87,11 @@ class ComponentController extends Controller
         $slots = $yaml['slots'] ?? [];
         $componentName = $yaml['component'] ?? ucfirst(str_replace('-', ' ', $component));
 
+        $studioDefaults = $yaml['studio']['defaults'] ?? [];
         $attrs = [];
         foreach ($props as $prop) {
             $name = $prop['name'];
-            $default = $prop['default'] ?? '';
+            $default = $studioDefaults[$name] ?? $prop['default'] ?? '';
             $attrs[$name] = request()->input("attrs.{$name}", $default);
         }
 
@@ -95,13 +103,16 @@ class ComponentController extends Controller
         }
 
         if (!isset($slotValues['slot'])) {
-            $slotValues['slot'] = request()->input('slots.slot', $componentName);
+            $fallback = !empty($slots) ? $componentName : '';
+            $slotValues['slot'] = request()->input('slots.slot', $fallback);
         }
 
+        $container = $yaml['studio']['container'] ?? null;
         $code = $this->generateCode($component, $attrs, $slotValues, $props);
+        $renderCode = $container ? str_replace('{{component}}', $code, $container) : $code;
 
         try {
-            $rendered = Blade::render($code);
+            $rendered = Blade::render($renderCode);
         } catch (\Throwable $e) {
             $rendered = '<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">' . e($e->getMessage()) . '</pre></div>';
         }

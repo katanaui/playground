@@ -36,7 +36,14 @@ async function collectFiles(dir, base) {
         const fullPath = join(dir, entry.name);
         const relPath = relative(base, fullPath);
 
-        if (entry.isDirectory()) {
+        // Follow symlinks so composer path-repo symlinks are bundled
+        let isDir = entry.isDirectory();
+        if (entry.isSymbolicLink()) {
+            const targetStat = await stat(fullPath);
+            isDir = targetStat.isDirectory();
+        }
+
+        if (isDir) {
             if (EXCLUDE_DIRS.has(relPath)) continue;
             files.push(...await collectFiles(fullPath, base));
         } else {
