@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { usePhp } from './composables/usePhp'
 import { useShareUrl } from './composables/useShareUrl'
 import { useTheme } from './composables/useTheme'
@@ -15,6 +15,14 @@ import ToolsView from './components/ToolsView.vue'
 const activeTab = ref<'site' | 'code' | 'terminal' | 'agent' | 'tools'>('site')
 const loading = ref(true)
 const loadingFailed = ref(false)
+const siteViewRef = ref<InstanceType<typeof SiteView> | null>(null)
+
+const currentRoute = computed(() => (siteViewRef.value as any)?.routeInput ?? '/')
+const isNavigating = computed(() => (siteViewRef.value as any)?.navigating ?? false)
+
+function handleNavigate(path: string) {
+  ;(siteViewRef.value as any)?.go(path)
+}
 
 const { boot, booted, bootProgress, bootStatus } = usePhp()
 const { captureFromUrl, applyPendingPayload } = useShareUrl()
@@ -46,12 +54,12 @@ onMounted(async () => {
     />
 
     <!-- Top accent border -->
-    <div class="h-1.5 bg-rose-500 shrink-0"></div>
+    <div class="h-0 bg-linear-to-br from-blue-600 to-purple-600 via-indigo-600 shrink-0"></div>
 
-    <AppHeader />
+    <AppHeader :route="currentRoute" :navigating="isNavigating" @navigate="handleNavigate" />
     <TabBar :active-tab="activeTab" @update:active-tab="activeTab = $event" />
 
-    <SiteView v-show="activeTab === 'site'" />
+    <SiteView ref="siteViewRef" v-show="activeTab === 'site'" />
     <CodeView v-show="activeTab === 'code'" />
     <TerminalView v-show="activeTab === 'terminal'" />
     <AgentView v-show="activeTab === 'agent'" />

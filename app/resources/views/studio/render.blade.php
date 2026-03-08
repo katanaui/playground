@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        @theme {
+            --color-background: var(--background);
+            --color-foreground: var(--foreground);
+            --color-card: var(--card);
+            --color-card-foreground: var(--card-foreground);
+            --color-popover: var(--popover);
+            --color-popover-foreground: var(--popover-foreground);
+            --color-primary: var(--primary);
+            --color-primary-foreground: var(--primary-foreground);
+            --color-secondary: var(--secondary);
+            --color-secondary-foreground: var(--secondary-foreground);
+            --color-muted: var(--muted);
+            --color-muted-foreground: var(--muted-foreground);
+            --color-accent: var(--accent);
+            --color-accent-foreground: var(--accent-foreground);
+            --color-destructive: var(--destructive);
+            --color-border: var(--border);
+            --color-input: var(--input);
+            --color-ring: var(--ring);
+            --radius: var(--radius);
+            --radius-medium: var(--radius-medium);
+            --radius-large: var(--radius-large);
+        }
+        :root {
+            --background: #ffffff;
+            --foreground: #0a0a0a;
+            --card: #ffffff;
+            --card-foreground: #0a0a0a;
+            --popover: #ffffff;
+            --popover-foreground: #0a0a0a;
+            --primary: #1c1917;
+            --primary-foreground: #ffffff;
+            --secondary: #f5f5f5;
+            --secondary-foreground: #262626;
+            --muted: #f5f5f5;
+            --muted-foreground: #737373;
+            --accent: #f5f5f5;
+            --accent-foreground: #171717;
+            --destructive: #e7000b;
+            --border: #e5e5e5;
+            --input: #e5e5e5;
+            --ring: #a1a1a1;
+            --radius: 0.5rem;
+            --radius-medium: 1rem;
+            --radius-large: 1.5rem;
+        }
+        .dark {
+            --background: #0a0a0a;
+            --foreground: #ffffff;
+            --card: #171717;
+            --card-foreground: #fafafa;
+            --popover: #171717;
+            --popover-foreground: #fafafa;
+            --primary: #ffffff;
+            --primary-foreground: #1c1917;
+            --secondary: #262626;
+            --secondary-foreground: #f5f5f5;
+            --muted: #262626;
+            --muted-foreground: #a1a1a1;
+            --accent: #262626;
+            --accent-foreground: #fafafa;
+            --destructive: #b60003;
+            --border: rgba(255, 255, 255, 0.1);
+            --input: rgba(255, 255, 255, 0.15);
+            --ring: #737373;
+            --radius: 0.5rem;
+            --radius-medium: 1rem;
+            --radius-large: 1.5rem;
+        }
+    </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        [x-cloak] { display: none !important; }
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+            font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    {!! $rendered !!}
+</body>
+</html>

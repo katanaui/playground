@@ -272,14 +272,14 @@ function triggerDownload(blob: Blob, filename: string) {
               placeholder="https://github.com/owner/repo"
               :disabled="importing"
               class="flex-1 px-3 py-2 text-sm border border-stone-300 dark:border-stone-600 rounded-md bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200
-                     focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent
+                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
                      disabled:opacity-50 disabled:bg-stone-50 dark:disabled:bg-stone-800"
               @keydown.enter="importRepo"
             />
             <button
               :disabled="importing || !repoUrl.trim()"
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                     hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                     hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed
                      cursor-pointer shrink-0"
               @click="importRepo"
             >
@@ -292,7 +292,7 @@ function triggerDownload(blob: Blob, filename: string) {
             <div class="h-1.5 bg-stone-100 dark:bg-stone-700 rounded-full overflow-hidden">
               <div
                 class="h-full rounded-full transition-all duration-300"
-                :class="importDone ? 'bg-emerald-500' : 'bg-rose-500'"
+                :class="importDone ? 'bg-emerald-500' : 'bg-blue-500'"
                 :style="{ width: `${importProgress * 100}%` }"
               />
             </div>
@@ -315,8 +315,8 @@ function triggerDownload(blob: Blob, filename: string) {
           </p>
           <button
             :disabled="sharing"
-            class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                   hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                   hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed
                    cursor-pointer"
             @click="generateShareUrl"
           >
@@ -340,8 +340,8 @@ function triggerDownload(blob: Blob, filename: string) {
             </div>
             <button
               :disabled="exporting"
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                     hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                     hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed
                      cursor-pointer shrink-0"
               @click="exportFilesystem"
             >
@@ -357,8 +357,8 @@ function triggerDownload(blob: Blob, filename: string) {
             </div>
             <button
               :disabled="dbExporting"
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                     hover:bg-rose-600 disabled:opacity-50 disabled:cursor-not-allowed
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                     hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed
                      cursor-pointer shrink-0"
               @click="exportDatabase"
             >
@@ -387,8 +387,8 @@ function triggerDownload(blob: Blob, filename: string) {
               Mirror the virtual filesystem to a local folder for editing in VS Code or any external editor. Changes sync both ways.
             </p>
             <button
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                     hover:bg-rose-600 cursor-pointer"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                     hover:bg-blue-600 cursor-pointer"
               @click="connect"
             >
               Mirror to Local Folder
@@ -400,7 +400,7 @@ function triggerDownload(blob: Blob, filename: string) {
             <div class="space-y-1">
               <div class="h-1.5 bg-stone-100 dark:bg-stone-700 rounded-full overflow-hidden">
                 <div
-                  class="h-full bg-rose-500 rounded-full transition-all duration-300"
+                  class="h-full bg-blue-500 rounded-full transition-all duration-300"
                   :style="{ width: `${syncProgress * 100}%` }"
                 />
               </div>
@@ -429,8 +429,8 @@ function triggerDownload(blob: Blob, filename: string) {
           <template v-else-if="syncState === 'error'">
             <p class="text-sm text-red-600">{{ syncError }}</p>
             <button
-              class="px-4 py-2 text-sm font-medium text-white bg-rose-500 rounded-md
-                     hover:bg-rose-600 cursor-pointer"
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md
+                     hover:bg-blue-600 cursor-pointer"
               @click="connect"
             >
               Retry

@@ -8,16 +8,16 @@ const emit = defineEmits<{
 }>()
 
 const tabs = [
-  { key: 'site' as const, label: 'Preview' },
+  { key: 'site' as const, label: 'Components' },
   { key: 'code' as const, label: 'Code' },
-  { key: 'terminal' as const, label: 'Terminal' },
+  /*{ key: 'terminal' as const, label: 'Terminal' },
   { key: 'agent' as const, label: 'Agent' },
-  { key: 'tools' as const, label: 'Tools' },
+  { key: 'tools' as const, label: 'Tools' },*/
 ]
 </script>
 
 <template>
-  <div class="bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 shrink-0 flex items-center px-2">
+  <div class="bg-stone-50 hidden dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 shrink-0 flex items-center">
     <button
       v-for="tab in tabs"
       :key="tab.key"
