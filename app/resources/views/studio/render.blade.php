@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @livewireStyles
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
         @theme {
@@ -102,5 +104,75 @@
 </head>
 <body>
     {!! $rendered !!}
+    @livewireScripts
+    <script>
+    // Monkey-patch fetch() to intercept local requests and route through WASM via postMessage
+    (function() {
+        var _originalFetch = window.fetch;
+        window.fetch = function(input, init) {
+            var url = typeof input === 'string' ? input : (input && input.url ? input.url : '');
+            var isLocal = url.startsWith('/') || url.match(/^https?:\/\/localhost/);
+            if (!isLocal) return _originalFetch.apply(this, arguments);
+
+            var path = url.replace(/^https?:\/\/localhost/, '');
+            var method = (init && init.method) || 'GET';
+            var body = (init && init.body) || null;
+            var headers = {};
+            if (init && init.headers) {
+                if (typeof init.headers.forEach === 'function') {
+                    init.headers.forEach(function(v, k) { headers[k] = v; });
+                } else if (typeof init.headers === 'object') {
+                    var keys = Object.keys(init.headers);
+                    for (var i = 0; i < keys.length; i++) { headers[keys[i]] = init.headers[keys[i]]; }
+                }
+            }
+
+            var requestId = 'wf-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+            return new Promise(function(resolve, reject) {
+                var timeout = setTimeout(function() {
+                    window.removeEventListener('message', handler);
+                    reject(new Error('WASM fetch timeout'));
+                }, 30000);
+
+                function handler(e) {
+                    if (e.data && e.data.type === 'wasm-fetch-response' && e.data.requestId === requestId) {
+                        window.removeEventListener('message', handler);
+                        clearTimeout(timeout);
+                        resolve(new Response(e.data.body, {
+                            status: e.data.status || 200,
+                            headers: e.data.headers || {}
+                        }));
+                    }
+                }
+                window.addEventListener('message', handler);
+                window.parent.postMessage({
+                    type: 'wasm-fetch',
+                    requestId: requestId,
+                    url: path,
+                    method: method,
+                    body: typeof body === 'string' ? body : null,
+                    headers: headers
+                }, '*');
+            });
+        };
+    })();
+
+    // Relay wasm-fetch messages from child iframes to parent, and responses back down
+    window.addEventListener('message', function(e) {
+        if (e.data && e.data.type === 'wasm-fetch' && e.source !== window.parent) {
+            window.parent.postMessage(e.data, '*');
+            if (!window._wasmFetchSources) window._wasmFetchSources = {};
+            window._wasmFetchSources[e.data.requestId] = e.source;
+        }
+        if (e.data && e.data.type === 'wasm-fetch-response') {
+            var source = window._wasmFetchSources && window._wasmFetchSources[e.data.requestId];
+            if (source) {
+                try { source.postMessage(e.data, '*'); } catch(ex) {}
+                delete window._wasmFetchSources[e.data.requestId];
+            }
+        }
+    });
+    </script>
 </body>
 </html>

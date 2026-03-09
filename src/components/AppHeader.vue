@@ -48,6 +48,18 @@ function onKeydown(e: KeyboardEvent) {
         <span class="text-sm font-semibold text-stone-800 dark:text-stone-100 tracking-tight">component <span class="font-normal text-stone-500 dark:text-stone-400">studio</span></span>
       </div>
 
+      <!-- Refresh -->
+      <button
+        @click="emit('navigate', props.route)"
+        class="w-7 h-7 flex items-center justify-center rounded-full text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors shrink-0"
+        :class="{ 'animate-spin': navigating }"
+        title="Refresh"
+      >
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+      </button>
+
       <!-- Route display / editor -->
       <div class="flex-1 flex items-center min-w-0 w-full">
         <!-- Read-only mode -->

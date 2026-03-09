@@ -19,6 +19,7 @@ const EXCLUDE_DIRS = new Set([
     '.git',
     'tests',
     'storage/logs',
+    'public/katana',
 ]);
 
 const EXCLUDE_FILES = new Set([
@@ -44,7 +45,7 @@ async function collectFiles(dir, base) {
         }
 
         if (isDir) {
-            if (EXCLUDE_DIRS.has(relPath)) continue;
+            if (EXCLUDE_DIRS.has(relPath) || EXCLUDE_DIRS.has(entry.name)) continue;
             files.push(...await collectFiles(fullPath, base));
         } else {
             if (EXCLUDE_FILES.has(entry.name)) continue;

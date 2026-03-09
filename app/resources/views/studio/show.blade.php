@@ -8,18 +8,6 @@
             {{-- Drag overlay — blocks iframe from capturing mouse events during resize --}}
             <div x-show="dragging" style="position:absolute;inset:0;z-index:10;cursor:row-resize;" x-cloak></div>
 
-            {{-- Refresh button (absolute top-right) --}}
-            <button
-                @click="refreshPreview()"
-                style="position:absolute;top:8px;right:8px;z-index:5;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;transition:all 0.15s;color:#6b7280;"
-                onmouseover="this.style.borderColor='#d1d5db';this.style.background='#f9fafb';this.style.color='#374151'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='#fff';this.style.color='#6b7280'"
-                title="Refresh preview"
-            >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
-                </svg>
-            </button>
-
             {{-- Live Preview (iframe with srcdoc) --}}
             <iframe
                 x-ref="previewFrame"
@@ -88,26 +76,19 @@
                                             @endforeach
                                         </select>
                                     @elseif(($prop['type'] ?? 'text') === 'boolean')
-                                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                                            <div style="position:relative;width:36px;height:20px;">
-                                                <input
-                                                    type="checkbox"
-                                                    :checked="attrs['{{ $prop['name'] }}'] === 'true' || attrs['{{ $prop['name'] }}'] === true"
-                                                    @change="attrs['{{ $prop['name'] }}'] = $event.target.checked ? 'true' : 'false'; generateCode()"
-                                                    style="position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;z-index:1;margin:0;"
-                                                />
-                                                <div
-                                                    :style="(attrs['{{ $prop['name'] }}'] === 'true' || attrs['{{ $prop['name'] }}'] === true) ? 'background:#2563eb;' : 'background:#d1d5db;'"
-                                                    style="width:36px;height:20px;border-radius:10px;transition:background 0.2s;position:relative;"
-                                                >
-                                                    <div
-                                                        :style="(attrs['{{ $prop['name'] }}'] === 'true' || attrs['{{ $prop['name'] }}'] === true) ? 'transform:translateX(16px);' : 'transform:translateX(2px);'"
-                                                        style="width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:2px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);"
-                                                    ></div>
-                                                </div>
-                                            </div>
-                                            <span style="font-size:12px;color:#6b7280;" x-text="(attrs['{{ $prop['name'] }}'] === 'true' || attrs['{{ $prop['name'] }}'] === true) ? 'true' : 'false'"></span>
-                                        </label>
+                                        @php $boolCheck = "attrs['" . $prop['name'] . "'] === 'true' || attrs['" . $prop['name'] . "'] === true"; @endphp
+                                        <div
+                                            role="switch"
+                                            x-bind:aria-checked="{{ $boolCheck }}"
+                                            x-on:click="attrs['{{ $prop['name'] }}'] = ({{ $boolCheck }}) ? 'false' : 'true'; generateCode()"
+                                            x-bind:style="({{ $boolCheck }}) ? 'background-color:#18181b' : 'background-color:#e4e4e7'"
+                                            style="position:relative;display:inline-flex;height:24px;width:44px;flex-shrink:0;cursor:pointer;align-items:center;border-radius:9999px;border:none;padding:2px;box-sizing:border-box;background-color:#e4e4e7;transition:background-color 0.15s cubic-bezier(0.4,0,0.2,1);"
+                                        >
+                                            <span
+                                                x-bind:style="({{ $boolCheck }}) ? 'transform:translateX(20px)' : 'transform:translateX(0px)'"
+                                                style="pointer-events:none;display:block;height:20px;width:20px;border-radius:9999px;background-color:#fff;box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px -1px rgba(0,0,0,0.1);transition:transform 0.15s cubic-bezier(0.4,0,0.2,1);"
+                                            ></span>
+                                        </div>
                                     @elseif(($prop['type'] ?? 'text') === 'textarea')
                                         <textarea
                                             x-model="attrs['{{ $prop['name'] }}']"
@@ -277,7 +258,7 @@
                     // Rewrite http://localhost asset URLs to relative paths and inject
                     // <base href> so they resolve against the real dev server origin
                     if (window.__studioOrigin && this.previewHtml) {
-                        this.previewHtml = this.previewHtml.replace(/https?:\/\/localhost(\/katana\/[^"'\s]+)/g, '$1');
+                        this.previewHtml = this.previewHtml.replace(/https?:\/\/localhost(\/[^"'\s]+)/g, '$1');
                         var baseTag = '<base href="' + window.__studioOrigin + '/">';
                         if (this.previewHtml.indexOf('<head>') !== -1) {
                             this.previewHtml = this.previewHtml.replace('<head>', '<head>' + baseTag);
@@ -305,8 +286,17 @@
 
                         if (value === true || value === 'true' || value === '1') {
                             attrLines.push('    ' + key);
+                        } else if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+                            attrLines.push('    :' + key + '="' + this._toPhpArray(value) + '"');
+                        } else if (typeof value === 'string' && (value.charAt(0) === '[' || value.charAt(0) === '{')) {
+                            try {
+                                let parsed = JSON.parse(value);
+                                attrLines.push('    :' + key + '="' + this._toPhpArray(parsed) + '"');
+                            } catch(e) {
+                                attrLines.push('    ' + key + '="' + value.replace(/"/g, '&quot;') + '"');
+                            }
                         } else {
-                            attrLines.push('    ' + key + '="' + value + '"');
+                            attrLines.push('    ' + key + '="' + String(value).replace(/"/g, '&quot;') + '"');
                         }
                     }
 
@@ -398,6 +388,22 @@
                     } catch(e) {}
                     this.copied = true;
                     setTimeout(() => { this.copied = false; }, 2000);
+                },
+
+                _toPhpArray(val) {
+                    if (Array.isArray(val)) {
+                        return '[' + val.map(v => this._toPhpArray(v)).join(', ') + ']';
+                    } else if (val !== null && typeof val === 'object') {
+                        let items = Object.entries(val).map(([k, v]) => "'" + k.replace(/'/g, "\\'") + "' => " + this._toPhpArray(v));
+                        return '[' + items.join(', ') + ']';
+                    } else if (typeof val === 'string') {
+                        return "'" + val.replace(/'/g, "\\'") + "'";
+                    } else if (typeof val === 'boolean') {
+                        return val ? 'true' : 'false';
+                    } else if (val === null) {
+                        return 'null';
+                    }
+                    return String(val);
                 },
 
                 startResize(e) {

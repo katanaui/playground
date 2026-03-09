@@ -13,6 +13,7 @@ dist-ssr
 *.local
 public/app.zip
 public/katana
+public/vendor
 app/packages
 
 # Editor directories and files

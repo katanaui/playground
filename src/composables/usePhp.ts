@@ -110,6 +110,90 @@ export function usePhp() {
     return result.text || ''
   }
 
+  async function handleRequest(
+    path: string,
+    method: string = 'GET',
+    body: string | null = null,
+    headers: Record<string, string> = {}
+  ): Promise<{ body: string; status: number; headers: Record<string, string> }> {
+    if (!php.value) return { body: '', status: 500, headers: {} }
+
+    // Write body and headers to temp files to avoid PHP string escaping issues
+    const bodyPath = '/tmp/_wasm_req_body'
+    const headersPath = '/tmp/_wasm_req_headers'
+
+    if (!php.value.fileExists('/tmp')) {
+      php.value.mkdir('/tmp')
+    }
+
+    if (body) {
+      php.value.writeFile(bodyPath, body)
+    } else if (php.value.fileExists(bodyPath)) {
+      php.value.writeFile(bodyPath, '')
+    }
+    php.value.writeFile(headersPath, JSON.stringify(headers))
+
+    const safePath = path.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+    const safeMethod = method.toUpperCase().replace(/[^A-Z]/g, '')
+
+    const result = await php.value.run({
+      code: `<?php
+        chdir('/app');
+        require '/app/vendor/autoload.php';
+        $app = require_once '/app/bootstrap/app.php';
+
+        $headers = json_decode(file_get_contents('${headersPath}'), true) ?: [];
+        $bodyContent = file_exists('${bodyPath}') && filesize('${bodyPath}') > 0
+            ? file_get_contents('${bodyPath}') : null;
+
+        // Build server vars from headers
+        $server = [];
+        foreach ($headers as $key => $value) {
+            $upper = strtoupper(str_replace('-', '_', $key));
+            if ($upper === 'CONTENT_TYPE') {
+                $server['CONTENT_TYPE'] = $value;
+            } else {
+                $server['HTTP_' . $upper] = $value;
+            }
+        }
+
+        $request = Illuminate\\Http\\Request::create(
+            '${safePath}', '${safeMethod}', [], [], [], $server, $bodyContent
+        );
+
+        // Ensure headers are set properly on the request object
+        foreach ($headers as $key => $value) {
+            $request->headers->set($key, $value);
+        }
+
+        $kernel = $app->make(Illuminate\\Contracts\\Http\\Kernel::class);
+        $response = $kernel->handle($request);
+
+        // Return as JSON envelope with status, headers, and body
+        $envelope = [
+            'status' => $response->getStatusCode(),
+            'headers' => [],
+            'body' => $response->getContent()
+        ];
+        foreach ($response->headers->all() as $key => $values) {
+            $envelope['headers'][$key] = implode(', ', $values);
+        }
+        echo json_encode($envelope);
+      `,
+    })
+
+    try {
+      const envelope = JSON.parse(result.text || '{}')
+      return {
+        body: envelope.body || '',
+        status: envelope.status || 200,
+        headers: envelope.headers || {}
+      }
+    } catch {
+      return { body: result.text || '', status: 200, headers: {} }
+    }
+  }
+
   async function runArtisan(command: string): Promise<{ output: string; errors: string }> {
     if (!php.value) return { output: '', errors: '' }
     const safeCmd = command.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
@@ -425,6 +509,7 @@ export function usePhp() {
     initialHashes,
     boot,
     navigateTo,
+    handleRequest,
     runArtisan,
     runComposerRequire,
     dumpAutoload,

@@ -168,8 +168,14 @@ class ComponentController extends Controller
 
             if ($value === true || $value === 'true' || $value === '1') {
                 $attrLines[] = "    {$key}";
+            } elseif (is_array($value)) {
+                $phpExpr = $this->phpArrayLiteral($value);
+                $attrLines[] = "    :{$key}=\"{$phpExpr}\"";
+            } elseif (is_string($value) && (str_starts_with($value, '[') || str_starts_with($value, '{')) && json_decode($value) !== null) {
+                $decoded = json_decode($value, true);
+                $attrLines[] = "    :{$key}=\"" . $this->phpArrayLiteral($decoded) . "\"";
             } else {
-                $attrLines[] = "    {$key}=\"{$value}\"";
+                $attrLines[] = "    {$key}=\"" . e((string) $value) . "\"";
             }
         }
 
@@ -199,5 +205,30 @@ class ComponentController extends Controller
         }
 
         return implode("\n", $lines);
+    }
+
+    private function phpArrayLiteral($value): string
+    {
+        if (is_array($value)) {
+            if (array_is_list($value)) {
+                $items = array_map(fn($v) => $this->phpArrayLiteral($v), $value);
+                return '[' . implode(', ', $items) . ']';
+            }
+            $items = [];
+            foreach ($value as $k => $v) {
+                $items[] = "'" . addslashes((string) $k) . "' => " . $this->phpArrayLiteral($v);
+            }
+            return '[' . implode(', ', $items) . ']';
+        }
+        if (is_string($value)) {
+            return "'" . addslashes($value) . "'";
+        }
+        if (is_bool($value)) {
+            return $value ? 'true' : 'false';
+        }
+        if (is_null($value)) {
+            return 'null';
+        }
+        return (string) $value;
     }
 }
