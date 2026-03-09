@@ -274,6 +274,15 @@
                             this.previewHtml = e.data.html;
                         }
                     });
+                    // Rewrite http://localhost asset URLs to relative paths and inject
+                    // <base href> so they resolve against the real dev server origin
+                    if (window.__studioOrigin && this.previewHtml) {
+                        this.previewHtml = this.previewHtml.replace(/https?:\/\/localhost(\/katana\/[^"'\s]+)/g, '$1');
+                        var baseTag = '<base href="' + window.__studioOrigin + '/">';
+                        if (this.previewHtml.indexOf('<head>') !== -1) {
+                            this.previewHtml = this.previewHtml.replace('<head>', '<head>' + baseTag);
+                        }
+                    }
                 },
 
                 generateCode() {

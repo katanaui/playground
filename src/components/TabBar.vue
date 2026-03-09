@@ -17,7 +17,7 @@ const tabs = [
 </script>
 
 <template>
-  <div class="bg-stone-50 hidden dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 shrink-0 flex items-center">
+  <div class="bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-700 shrink-0 flex items-center">
     <button
       v-for="tab in tabs"
       :key="tab.key"

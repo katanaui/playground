@@ -70,6 +70,9 @@ function inlineVfsAssets(html: string): string {
     /<script[^>]+src="\/build\/assets\/[^"]+\.js"[^>]*><\/script>/g,
     ''
   )
+  // Rewrite http://localhost asset URLs to relative paths so they resolve
+  // against the real dev server (via <base href>) instead of WASM's fake localhost
+  html = html.replace(/https?:\/\/localhost(\/katana\/[^"'\s]+)/g, '$1')
   return html
 }
 
@@ -80,6 +83,16 @@ function injectTailwind(html: string): string {
     return html.replace('<head>', `<head>${tailwindCdn}`)
   }
   return tailwindCdn + html
+}
+
+function injectOriginVar(html: string): string {
+  const script = `<script>window.__studioOrigin="${window.location.origin}"<\/script>`
+  return html.includes('<head>') ? html.replace('<head>', `<head>${script}`) : script + html
+}
+
+function injectBaseUrl(html: string): string {
+  const base = `<base href="${window.location.origin}/">`
+  return html.includes('<head>') ? html.replace('<head>', `<head>${base}`) : base + html
 }
 
 function injectNavigationInterceptor(html: string): string {
@@ -104,7 +117,7 @@ async function go(path?: string) {
   try {
     const html = await navigateTo(targetPath)
     if (thisNav !== navigationId) return // superseded by newer navigation
-    srcdoc.value = html ? injectNavigationInterceptor(injectTailwind(inlineVfsAssets(html))) : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:system-ui;color:#a8a29e;">No output from ${targetPath}</div>`
+    srcdoc.value = html ? injectNavigationInterceptor(injectTailwind(injectOriginVar(inlineVfsAssets(html)))) : `<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:system-ui;color:#a8a29e;">No output from ${targetPath}</div>`
   } catch (err: any) {
     if (thisNav !== navigationId) return
     srcdoc.value = `<div style="padding:2rem;font-family:system-ui;"><h2 style="color:#dc2626;margin:0 0 1rem;">Error</h2><pre style="background:#fef2f2;padding:1rem;border-radius:0.5rem;overflow:auto;color:#991b1b;font-size:0.875rem;">${err.message}</pre></div>`
@@ -122,7 +135,7 @@ function onKeydown(e: KeyboardEvent) {
 async function renderPreview(path: string) {
   try {
     const html = await navigateTo(path)
-    const processed = html ? injectTailwind(inlineVfsAssets(html)) : ''
+    const processed = html ? injectBaseUrl(injectTailwind(inlineVfsAssets(html))) : ''
     iframeRef.value?.contentWindow?.postMessage({ type: 'preview-html', html: processed }, '*')
   } catch (err: any) {
     const errorHtml = `<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">${err.message}</pre></div>`

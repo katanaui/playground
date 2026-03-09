@@ -81,6 +81,12 @@
     <!-- Alpine Plugins -->
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @foreach($studioScripts ?? [] as $scriptUrl)
+        <script src="{{ $scriptUrl }}"></script>
+    @endforeach
+    @if(!empty($studioHead))
+        {!! $studioHead !!}
+    @endif
     <style>
         [x-cloak] { display: none !important; }
         body {

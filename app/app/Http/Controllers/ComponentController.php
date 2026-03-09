@@ -50,7 +50,14 @@ class ComponentController extends Controller
 
         $componentId = $component;
         $container = $yaml['studio']['container'] ?? null;
-        $code = $this->generateCode($component, $attrs, $slotValues, $props);
+        $studioDefault = $yaml['studio']['default'] ?? null;
+
+        // Use studio.default as initial code if set and no user overrides via query string
+        if ($studioDefault && !request()->has('attrs') && !request()->has('slots')) {
+            $code = $studioDefault;
+        } else {
+            $code = $this->generateCode($component, $attrs, $slotValues, $props);
+        }
 
         // Wrap in studio container for preview rendering (but keep $code clean for display)
         $renderCode = $container ? str_replace('{{component}}', $code, $container) : $code;
@@ -62,7 +69,9 @@ class ComponentController extends Controller
         } catch (\Throwable $e) {
             $renderedHtml = '<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">' . e($e->getMessage()) . '</pre></div>';
         }
-        $previewDoc = view('studio.render', ['rendered' => $renderedHtml])->render();
+        $studioScripts = $yaml['studio']['scripts'] ?? [];
+        $studioHead = $yaml['studio']['head'] ?? '';
+        $previewDoc = view('studio.render', ['rendered' => $renderedHtml, 'studioScripts' => $studioScripts, 'studioHead' => $studioHead])->render();
 
         return view('studio.show', compact(
             'components',
@@ -108,7 +117,13 @@ class ComponentController extends Controller
         }
 
         $container = $yaml['studio']['container'] ?? null;
-        $code = $this->generateCode($component, $attrs, $slotValues, $props);
+        $studioDefault = $yaml['studio']['default'] ?? null;
+
+        if ($studioDefault && !request()->has('attrs') && !request()->has('slots')) {
+            $code = $studioDefault;
+        } else {
+            $code = $this->generateCode($component, $attrs, $slotValues, $props);
+        }
         $renderCode = $container ? str_replace('{{component}}', $code, $container) : $code;
 
         try {
@@ -117,7 +132,10 @@ class ComponentController extends Controller
             $rendered = '<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">' . e($e->getMessage()) . '</pre></div>';
         }
 
-        return view('studio.render', ['rendered' => $rendered]);
+        $studioScripts = $yaml['studio']['scripts'] ?? [];
+        $studioHead = $yaml['studio']['head'] ?? '';
+
+        return view('studio.render', ['rendered' => $rendered, 'studioScripts' => $studioScripts, 'studioHead' => $studioHead]);
     }
 
     public function render(Request $request)
@@ -134,7 +152,7 @@ class ComponentController extends Controller
             $rendered = '<div style="padding:1.5rem;font-family:system-ui;"><p style="color:#ef4444;font-weight:600;margin:0 0 0.5rem;">Render Error</p><pre style="background:#fef2f2;color:#991b1b;padding:1rem;border-radius:0.5rem;font-size:0.8rem;overflow:auto;white-space:pre-wrap;">' . e($e->getMessage()) . '</pre></div>';
         }
 
-        return view('studio.render', ['rendered' => $rendered]);
+        return view('studio.render', ['rendered' => $rendered, 'studioScripts' => [], 'studioHead' => '']);
     }
 
     private function generateCode(string $component, array $attrs, array $slotValues, array $props): string
