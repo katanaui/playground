@@ -10,7 +10,9 @@ class ComponentMetadata
 
     public function __construct()
     {
-        $this->basePath = base_path('vendor/katanaui/katana/resources/views/components/katana');
+        $packagesPath = base_path('packages/katanaui/katana/resources/views/components/katana');
+        $vendorPath = base_path('vendor/katanaui/katana/resources/views/components/katana');
+        $this->basePath = is_dir($packagesPath) ? $packagesPath : $vendorPath;
     }
 
     public function getAllComponents(): array

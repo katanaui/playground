@@ -51,7 +51,7 @@ function onKeydown(e: KeyboardEvent) {
       <!-- Route display / editor -->
       <div class="flex-1 flex items-center min-w-0 w-full">
         <!-- Read-only mode -->
-        <div v-if="!editing" @click="startEdit" class="flex cursor-pointer items-center gap-1.5 justify-between bg-stone-100 pr-2 pl-3 group rounded-full h-7 min-w-0 w-full">
+        <div v-if="!editing" @click="startEdit" class="flex cursor-pointer items-center gap-1.5 justify-between bg-stone-100 hover:bg-stone-200 pr-2 pl-3 group rounded-full h-7 min-w-0 w-full">
           <span class="text-xs font-mono text-stone-400 dark:text-stone-500 truncate">{{ route }}</span>
           <button
             class="w-5 h-5 flex items-center justify-center rounded text-stone-400 dark:text-stone-500 group-hover:text-stone-600 dark:group-hover:text-stone-300 group-hover:bg-stone-100 dark:group-hover:bg-stone-800 transition-colors cursor-pointer shrink-0"
@@ -78,7 +78,7 @@ function onKeydown(e: KeyboardEvent) {
           />
           <button
             :disabled="navigating"
-            class="px-2 py-0.5 text-xs absolute right-1 font-medium text-white bg-stone-700 dark:bg-stone-600 rounded-full hover:bg-stone-800 dark:hover:bg-stone-500 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            class="px-2 py-0.5 text-xs absolute right-1 font-medium text-white rounded-full disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
             @mousedown.prevent="submitRoute"
           >Go</button>
         </div>
@@ -101,7 +101,7 @@ function onKeydown(e: KeyboardEvent) {
           </svg>
         </a>
         <button
-          class="w-5 h-5 flex items-center justify-center rounded-full border border-stone-300 dark:border-stone-600 text-stone-400 dark:text-stone-500 hover:border-stone-400 dark:hover:border-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors cursor-pointer text-xs font-semibold leading-none"
+          class="w-5 h-5 flex items-center justify-center hover:bg-stone-200 rounded-full border border-stone-300 dark:border-stone-600 text-stone-400 dark:text-stone-500 hover:border-stone-400 dark:hover:border-stone-500 hover:text-stone-600 dark:hover:text-stone-300 transition-colors cursor-pointer text-xs font-semibold leading-none"
           aria-label="Help"
           @click="helpOpen = true"
         >?</button>
