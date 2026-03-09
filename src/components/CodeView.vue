@@ -18,12 +18,17 @@ const { isDark } = useTheme()
 
 const editorThemeCompartment = new Compartment()
 
-const tree = ref<TreeNode>({})
+const activeTab = ref<'components' | 'package'>('components')
+const componentTree = ref<TreeNode>({})
+const packageTree = ref<TreeNode>({})
 const currentFilePath = ref<string | null>(null)
 const fileViewerPath = ref('Select a file')
 const saveDisabled = ref(true)
 const saveStatusText = ref('')
 const saveStatusVisible = ref(false)
+
+const COMPONENTS_ROOT = '/app/packages/katanaui/katana/resources/views/components/katana'
+const PACKAGE_ROOT = '/app/packages/katanaui/katana'
 
 let editorView: EditorView | null = null
 let savedContent = ''
@@ -50,10 +55,11 @@ function getLangExtension(filePath: string) {
   return EXT_LANG[ext]?.() ?? []
 }
 
-function buildTree(filePaths: string[]): TreeNode {
+function buildTree(filePaths: string[], rootPrefix: string): TreeNode {
   const root: TreeNode = {}
   for (const fp of filePaths) {
-    const rel = fp.startsWith('/app/') ? fp.slice(5) : fp
+    const rel = fp.startsWith(rootPrefix) ? fp.slice(rootPrefix.length + 1) : fp
+    if (!rel) continue
     const parts = rel.split('/')
     let node: TreeNode = root
     for (let i = 0; i < parts.length; i++) {
@@ -73,7 +79,10 @@ function buildTree(filePaths: string[]): TreeNode {
 
 function refreshFileTree() {
   const allPaths = collectVfsPaths('/app')
-  tree.value = buildTree(allPaths)
+  const componentPaths = allPaths.filter(p => p.startsWith(COMPONENTS_ROOT + '/'))
+  const packagePaths = allPaths.filter(p => p.startsWith(PACKAGE_ROOT + '/'))
+  componentTree.value = buildTree(componentPaths, COMPONENTS_ROOT)
+  packageTree.value = buildTree(packagePaths, PACKAGE_ROOT)
 }
 
 function createEditor(content: string, langExt: any) {
@@ -130,7 +139,8 @@ function openFile(vfsPath: string) {
   if (!php.value) return
   try {
     const content = readFile(vfsPath)
-    const relPath = vfsPath.startsWith('/app/') ? vfsPath.slice(5) : vfsPath
+    const root = activeTab.value === 'components' ? COMPONENTS_ROOT : PACKAGE_ROOT
+    const relPath = vfsPath.startsWith(root) ? vfsPath.slice(root.length + 1) : vfsPath
 
     currentFilePath.value = vfsPath
     savedContent = content
@@ -187,17 +197,58 @@ defineExpose({ openFile, refreshFileTree })
 <template>
   <div class="flex-1 flex flex-col md:flex-row min-h-0">
     <!-- File tree -->
-    <aside class="order-2 md:order-none h-44 md:h-auto w-full md:w-72 border-t md:border-t-0 md:border-r border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 overflow-y-auto shrink-0 flex flex-col">
-      <div class="px-3 py-2 border-b border-stone-100 dark:border-stone-800 shrink-0">
-        <h2 class="text-xs font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-wider">Files</h2>
+    <aside class="order-2 md:order-none h-44 md:h-auto w-full md:w-72 border-t md:border-t-0 md:border-r border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 overflow-hidden shrink-0 flex flex-col">
+      <!-- Tabs -->
+      <div class="flex border-b border-stone-200 dark:border-stone-700 shrink-0">
+        <button
+          @click="activeTab = 'components'"
+          class="flex-1 px-3 py-2 text-xs font-medium transition-colors relative"
+          :class="activeTab === 'components'
+            ? 'text-stone-900 dark:text-stone-100'
+            : 'text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300'"
+        >
+          Component Files
+          <span
+            v-if="activeTab === 'components'"
+            class="absolute bottom-0 left-3 right-3 h-0.5 bg-stone-900 dark:bg-stone-100 rounded-full"
+          ></span>
+        </button>
+        <button
+          @click="activeTab = 'package'"
+          class="flex-1 px-3 py-2 text-xs font-medium transition-colors relative"
+          :class="activeTab === 'package'
+            ? 'text-stone-900 dark:text-stone-100'
+            : 'text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300'"
+        >
+          Package Files
+          <span
+            v-if="activeTab === 'package'"
+            class="absolute bottom-0 left-3 right-3 h-0.5 bg-stone-900 dark:bg-stone-100 rounded-full"
+          ></span>
+        </button>
       </div>
+      <!-- Tree -->
       <div class="py-1 text-sm font-mono text-stone-600 dark:text-stone-300 flex-1 overflow-y-auto">
-        <FileTree
-          v-if="Object.keys(tree).length > 0"
-          :tree="tree"
-          @open-file="openFile"
-        />
-        <div v-else class="px-3 py-8 text-center text-xs text-stone-400 dark:text-stone-500">Waiting for boot...</div>
+        <div v-show="activeTab === 'components'">
+          <FileTree
+            v-if="Object.keys(componentTree).length > 0"
+            :tree="componentTree"
+            :parent-path="COMPONENTS_ROOT"
+            @open-file="openFile"
+          />
+        </div>
+        <div v-show="activeTab === 'package'">
+          <FileTree
+            v-if="Object.keys(packageTree).length > 0"
+            :tree="packageTree"
+            :parent-path="PACKAGE_ROOT"
+            @open-file="openFile"
+          />
+        </div>
+        <div
+          v-if="(activeTab === 'components' && Object.keys(componentTree).length === 0) || (activeTab === 'package' && Object.keys(packageTree).length === 0)"
+          class="px-3 py-8 text-center text-xs text-stone-400 dark:text-stone-500"
+        >Waiting for boot...</div>
       </div>
     </aside>
     <!-- File editor -->
