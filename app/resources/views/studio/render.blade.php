@@ -97,9 +97,64 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 1rem;
+            padding: 0px;
             font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
         }
+        /* Tailwind Typography – prose classes (browser CDN doesn't support @plugin) */
+        .prose { color: #374151; max-width: 65ch; font-size: 1rem; line-height: 1.75; }
+        .prose > :first-child { margin-top: 0; }
+        .prose > :last-child { margin-bottom: 0; }
+        .prose p { margin-top: 1.25em; margin-bottom: 1.25em; }
+        .prose a { color: #111827; text-decoration: underline; font-weight: 500; }
+        .prose strong { color: #111827; font-weight: 600; }
+        .prose em { font-style: italic; }
+        .prose h1 { color: #111827; font-weight: 800; font-size: 2.25em; margin-top: 0; margin-bottom: 0.89em; line-height: 1.11; }
+        .prose h2 { color: #111827; font-weight: 700; font-size: 1.5em; margin-top: 2em; margin-bottom: 1em; line-height: 1.33; }
+        .prose h3 { color: #111827; font-weight: 600; font-size: 1.25em; margin-top: 1.6em; margin-bottom: 0.6em; line-height: 1.6; }
+        .prose h4 { color: #111827; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; line-height: 1.5; }
+        .prose h5 { color: #111827; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; line-height: 1.5; }
+        .prose h6 { color: #111827; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; line-height: 1.5; }
+        .prose blockquote { font-weight: 500; font-style: italic; color: #111827; border-left: 0.25rem solid #e5e7eb; padding-left: 1em; margin-top: 1.6em; margin-bottom: 1.6em; }
+        .prose blockquote p:first-of-type::before { content: open-quote; }
+        .prose blockquote p:last-of-type::after { content: close-quote; }
+        .prose code { color: #111827; font-weight: 600; font-size: 0.875em; }
+        .prose code::before { content: '`'; }
+        .prose code::after { content: '`'; }
+        .prose pre { color: #e5e7eb; background-color: #1f2937; overflow-x: auto; font-weight: 400; font-size: 0.875em; line-height: 1.71; margin-top: 1.71em; margin-bottom: 1.71em; border-radius: 0.375rem; padding: 0.86em 1.14em; }
+        .prose pre code { background-color: transparent; border-width: 0; border-radius: 0; padding: 0; font-weight: inherit; color: inherit; font-size: inherit; font-family: inherit; line-height: inherit; }
+        .prose pre code::before { content: none; }
+        .prose pre code::after { content: none; }
+        .prose ul { list-style-type: disc; margin-top: 1.25em; margin-bottom: 1.25em; padding-left: 1.625em; }
+        .prose ol { list-style-type: decimal; margin-top: 1.25em; margin-bottom: 1.25em; padding-left: 1.625em; }
+        .prose li { margin-top: 0.5em; margin-bottom: 0.5em; }
+        .prose ul > li::marker { color: #9ca3af; }
+        .prose ol > li::marker { color: #6b7280; font-weight: 400; }
+        .prose hr { border-color: #e5e7eb; margin-top: 3em; margin-bottom: 3em; }
+        .prose table { width: 100%; table-layout: auto; text-align: left; margin-top: 2em; margin-bottom: 2em; font-size: 0.875em; line-height: 1.71; }
+        .prose thead { border-bottom: 1px solid #d1d5db; }
+        .prose thead th { color: #111827; font-weight: 600; vertical-align: bottom; padding-right: 0.57em; padding-bottom: 0.57em; padding-left: 0.57em; }
+        .prose tbody tr { border-bottom: 1px solid #e5e7eb; }
+        .prose tbody td { vertical-align: baseline; padding: 0.57em; }
+        .prose img { margin-top: 2em; margin-bottom: 2em; }
+        .prose figure { margin-top: 2em; margin-bottom: 2em; }
+        .prose figcaption { color: #6b7280; font-size: 0.875em; line-height: 1.43; margin-top: 0.86em; }
+        .prose-sm { font-size: 0.875rem; line-height: 1.71; }
+        .prose-lg { font-size: 1.125rem; line-height: 1.78; }
+        .prose-xl { font-size: 1.25rem; line-height: 1.8; }
+        .prose-2xl { font-size: 1.5rem; line-height: 1.67; }
+        .dark .prose-invert, .prose-invert { color: #d1d5db; }
+        .dark .prose-invert h1, .dark .prose-invert h2, .dark .prose-invert h3, .dark .prose-invert h4, .dark .prose-invert h5, .dark .prose-invert h6,
+        .dark .prose-invert strong, .dark .prose-invert a,
+        .prose-invert h1, .prose-invert h2, .prose-invert h3, .prose-invert h4, .prose-invert h5, .prose-invert h6,
+        .prose-invert strong, .prose-invert a { color: #fff; }
+        .prose-invert blockquote { border-left-color: #4b5563; color: #e5e7eb; }
+        .prose-invert code { color: #fff; }
+        .prose-invert pre { background-color: rgba(0,0,0,0.5); }
+        .prose-invert hr { border-color: #374151; }
+        .prose-invert thead { border-bottom-color: #4b5563; }
+        .prose-invert tbody tr { border-bottom-color: #374151; }
+        .prose-invert ul > li::marker { color: #6b7280; }
+        .prose-invert ol > li::marker { color: #9ca3af; }
     </style>
 </head>
 <body>

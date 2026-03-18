@@ -23,7 +23,7 @@ const tabs = [
       :key="tab.key"
       class="px-4 py-2 text-xs font-semibold uppercase tracking-wider border-b-2 cursor-pointer"
       :class="activeTab === tab.key
-        ? 'border-stone-700 dark:border-stone-300 text-stone-700 dark:text-stone-200'
+        ? 'border-rose-600 dark:border-rose-500 text-stone-700 dark:text-stone-200'
         : 'border-transparent text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 hover:border-stone-300 dark:hover:border-stone-600'"
       @click="emit('update:activeTab', tab.key)"
     >{{ tab.label }}</button>

@@ -1353,7 +1353,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/katanaui/katana",
-                "reference": "0b905b3a4d05c7ef64647bb451a48027fe2c2d85"
+                "reference": "8a2fc64231f31e2f1a6ed2b6687e72725b1878fa"
             },
             "require": {
                 "codeat3/blade-phosphor-icons": "^2.0",

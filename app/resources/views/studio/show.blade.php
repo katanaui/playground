@@ -81,11 +81,11 @@
                                             role="switch"
                                             x-bind:aria-checked="{{ $boolCheck }}"
                                             x-on:click="attrs['{{ $prop['name'] }}'] = ({{ $boolCheck }}) ? 'false' : 'true'; generateCode()"
-                                            x-bind:style="({{ $boolCheck }}) ? 'background-color:#18181b' : 'background-color:#e4e4e7'"
+                                            x-bind:style="({{ $boolCheck }}) ? { backgroundColor: '#18181b' } : { backgroundColor: '#e4e4e7' }"
                                             style="position:relative;display:inline-flex;height:24px;width:44px;flex-shrink:0;cursor:pointer;align-items:center;border-radius:9999px;border:none;padding:2px;box-sizing:border-box;background-color:#e4e4e7;transition:background-color 0.15s cubic-bezier(0.4,0,0.2,1);"
                                         >
                                             <span
-                                                x-bind:style="({{ $boolCheck }}) ? 'transform:translateX(20px)' : 'transform:translateX(0px)'"
+                                                x-bind:style="({{ $boolCheck }}) ? { transform: 'translateX(20px)' } : { transform: 'translateX(0px)' }"
                                                 style="pointer-events:none;display:block;height:20px;width:20px;border-radius:9999px;background-color:#fff;box-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px -1px rgba(0,0,0,0.1);transition:transform 0.15s cubic-bezier(0.4,0,0.2,1);"
                                             ></span>
                                         </div>
