@@ -40,7 +40,7 @@ function onKeydown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-white/80 dark:bg-stone-900/80 backdrop-blur border-b border-stone-200 dark:border-stone-700 shrink-0">
+  <header class="sticky top-0 z-50 bg-white dark:bg-stone-900/80 backdrop-blur border-b border-stone-200 dark:border-stone-700 shrink-0">
     <div class="px-4 py-2.5 flex items-center gap-4">
       <!-- Logo -->
       <div class="flex items-center gap-2.5 shrink-0">
