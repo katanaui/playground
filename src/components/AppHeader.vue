@@ -83,7 +83,7 @@ function onKeydown(e: KeyboardEvent) {
             spellcheck="false"
             ref="route-input"
             autofocus
-            class="flex-1 px-2 py-1 text-xs font-mono bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 rounded-full pr-10 text-stone-700 dark:text-stone-200 outline-none focus:border-rose-400 dark:focus:border-rose-500 min-w-0"
+            class="flex-1 px-2 py-1 text-xs font-mono bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 rounded-full pr-10 text-stone-700 dark:text-stone-200 outline-none focus:border-blue-400 dark:focus:border-blue-500 min-w-0"
             :disabled="navigating"
             @keydown="onKeydown"
             @blur="editing = false"

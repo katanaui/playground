@@ -50,7 +50,7 @@ watch(() => props.progress, (val) => {
         </div>
         <div class="w-full h-1.5 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden">
           <div
-            class="h-full bg-rose-600 rounded-full transition-all duration-200 ease-out"
+            class="h-full bg-blue-600 rounded-full transition-all duration-200 ease-out"
             :style="{ width: `${pct}%` }"
           ></div>
         </div>

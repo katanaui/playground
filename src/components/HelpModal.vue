@@ -109,7 +109,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
             Press <kbd class="px-1 py-0.5 font-mono text-xs bg-stone-100 dark:bg-stone-700 text-stone-500 dark:text-stone-400 rounded border border-stone-200 dark:border-stone-600">Esc</kbd> to close
           </p>
           <button
-            class="px-3 py-1.5 text-xs font-medium text-white bg-rose-500 rounded-md hover:bg-rose-600 cursor-pointer"
+            class="px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 cursor-pointer"
             @click="emit('close')"
           >Got it</button>
         </div>

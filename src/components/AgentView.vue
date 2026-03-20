@@ -483,7 +483,7 @@ function onKeydown(e: KeyboardEvent) {
               @keydown="onKeydown"
             />
             <button
-              class="px-4 py-2.5 text-sm font-medium text-white bg-rose-500 rounded-lg hover:bg-rose-600 shrink-0"
+              class="px-4 py-2.5 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 shrink-0"
               @click="sendMessage"
             >Build</button>
           </div>
@@ -558,7 +558,7 @@ function onKeydown(e: KeyboardEvent) {
         />
         <button
           :disabled="agentRunning"
-          class="relative px-2.5 py-1.5 text-xs font-medium text-white bg-rose-500 rounded-md hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+          class="relative px-2.5 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
           @click="sendMessage"
         >
           <span :class="{ 'invisible': agentRunning }">Build</span>

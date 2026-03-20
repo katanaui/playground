@@ -54,7 +54,7 @@ onMounted(async () => {
     />
 
     <!-- Top accent border -->
-    <div class="h-1.5 bg-rose-500 shrink-0 hidden"></div>
+    <div class="h-1.5 bg-blue-500 shrink-0 hidden"></div>
 
     <div class="w-full h-full p-1 pb-0 bg-linear-to-br from-stone-100 via-stone-50 to-stone-200 flex flex-col">
     <div class="rounded-t-lg flex border border-stone-200 border-b-0 flex-col overflow-hidden h-full">
